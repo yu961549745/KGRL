@@ -20,5 +20,6 @@ using namespace arma;
 #include "utils.h"
 #include "ES.h"
 #include "TransD.h"
+#include "Dataset.h"
 
 #endif

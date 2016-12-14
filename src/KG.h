@@ -62,6 +62,14 @@ public:
 	idtype rndRelation(){
 		return -(rand() % (idtype)RV.size() + 1);
 	}
+	// 获取实体
+	char* getEntity(idtype id){
+		return (char*)EV[id - 1].c_str();
+	}
+    // 获取关系
+	char* getRelation(idtype id){
+		return (char*)RV[-id - 1].c_str();
+	}
 private:
 	idtype addEntity(string& s){
 		if (E.count(s)==0){

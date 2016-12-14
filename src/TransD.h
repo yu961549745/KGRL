@@ -6,8 +6,7 @@
 
 class TransD :public Model{
 public:
-	TransD(int _eDim, int _rDim, double _margin, int _batchSize, int _trainPeriod, vector<double> _stepSizes)
-		:Model(_eDim, _rDim, _margin, _batchSize, _trainPeriod, _stepSizes){
+	TransD(ModelParam param) :Model(param){
 		I = eye(rDim, eDim);
 	}
 

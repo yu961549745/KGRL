@@ -10,13 +10,25 @@ map：key=实体/关系名 ， value=嵌入向量
 */
 typedef unordered_map<idtype, mat> ES;
 
+struct ModelParam{
+	int eDim;// 实体向量的维数
+	int rDim;// 关系向量的维数
+	double margin;// 目标函数中的 margin
+	int batchSize;// SGD 的 batchSize
+	int trainPeriod;// 计算目标函数值的周期
+	vector<double> stepSizes;// 步长变化向量
+};
+
 /*
 采用SGD进行训练的基于平移的知识图谱嵌入方法的基类
 */
 class Model{
 public:
+	// 模型数据
 	KG kg;// 关联的知识图谱
 	ES es;// 嵌入向量空间
+
+	// 模型参数
 	int eDim;// 实体向量的维数
 	int rDim;// 关系向量的维数
 	double margin;// 目标函数中的 margin
@@ -24,13 +36,13 @@ public:
 	int trainPeriod;// 计算目标函数值的周期
 	vector<double> stepSizes;// 步长变化向量
 
-	Model(int _eDim, int _rDim, double _margin, int _batchSize, int _trainPeriod, vector<double> _stepSizes){
-		eDim = _eDim;
-		rDim = _rDim;
-		margin = _margin;
-		batchSize = _batchSize;
-		trainPeriod = _trainPeriod;
-		stepSizes = _stepSizes;
+	Model(ModelParam param){
+		eDim = param.eDim;
+		rDim = param.rDim;
+		margin = param.margin;
+		batchSize = param.batchSize;
+		trainPeriod = param.trainPeriod;
+		stepSizes = param.stepSizes;
 	}
 
 	// 初始化
@@ -166,9 +178,50 @@ public:
 			out.push_back(fs[k].second);
 		}
 	}
+
+	// 保存ES
+	void saveES(char* fname){
+		FILE* fid = fopen(fname, "w");
+		for (auto i = es.begin(); i != es.end(); i++){
+			mat& v = i->second;
+			fprintf(fid, "%d %d %d\n", i->first, v.n_rows, v.n_cols);
+			fprintMat(fid, v);
+		}
+		fclose(fid);
+	}
+	// 读取ES
+	void loadES(char* fname){
+		FILE* fid = fopen(fname, "r");
+		int id, m, n;
+		while (fscanf(fid, "%d %d %d", &id, &m, &n) != EOF){
+			es[id] = mat(m, n);
+			fscanMat(fid, es[id]);
+		}
+		fclose(fid);
+	}
+
 private:
 	static bool cmp(const pair<double, idtype>&a, const pair<double, idtype>& b){
 		return a.first < b.first;
+	}
+	void fprintMat(FILE* fid, mat& v){
+		int m = v.n_rows;
+		int n = v.n_cols;
+		for (int i = 0; i < m; i++){
+			for (int j = 0; j < n; j++){
+				fprintf(fid, "%lf ", v(i, j));
+			}
+			fprintf(fid, "\n");
+		}
+	}
+	void fscanMat(FILE*fid, mat& v){
+		int m = v.n_rows;
+		int n = v.n_cols;
+		for (int i = 0; i < m; i++){
+			for (int j = 0; j < n; j++){
+				fscanf(fid, "%lf", &v(i, j));
+			}
+		}
 	}
 };
 
