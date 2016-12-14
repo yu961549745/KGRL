@@ -5,24 +5,22 @@
 #define _KG_H_
 
 #include "stdafx.h"
+
+typedef int idtype;
 /*
 三元组数据结构
 保存的是KG中string对象的c_str()指针
 */
 class Triple{
 public:
-	char *h, *r, *t;
-	Triple(char* _h, char* _r, char* _t){
+	idtype h, r, t;
+	Triple(idtype _h, idtype _r, idtype _t){
 		h = _h; r = _r; t = _t;
-	}
-	friend ostream & operator<<(ostream &os, const Triple &t){
-		os << "( " << t.h << " , " << t.r << " , " << t.t << " )" << endl;
-		return os;
 	}
 };
 struct TripleHash{
 	size_t operator()(const Triple& k) const{
-		hash<char*> h;
+		hash<idtype> h;
 		return h(k.h) ^ h(k.r) ^ h(k.t);
 	}
 };
@@ -34,19 +32,18 @@ struct TripleEqual{
 
 /*
 知识图谱数据结构：
-T 三元组map，键为三元组，值为正确与否
-E 实体map，键为实体，值为对应字符串指针
-R 关系map，键为实体，值为对应字符串指针
 */
 class KG{
 public:
 	unordered_map<Triple, bool, TripleHash, TripleEqual> T;
-	unordered_map<string, char*> E, R;
+	unordered_map<string, idtype> E, R;
+	vector<Triple> TV;
+	vector<string> EV, RV;
 	// 添加三元组，自动去重
 	void addTriple(string h, string r, string t, bool type = true){
-		char *ph = addEntity(h);
-		char *pr = addRelation(r);
-		char *pt = addEntity(t);
+		idtype ph = addEntity(h);
+		idtype pr = addRelation(r);
+		idtype pt = addEntity(t);
 		Triple tt(ph, pr, pt);
 		if (T.count(tt) == 0){
 			T[tt] = type;
@@ -58,27 +55,25 @@ public:
 		return TV[rand() % TV.size()];
 	}
 	// 随机实体
-	char* rndEntity(){
-		return EV[rand() % EV.size()];
+	idtype rndEntity(){
+		return (rand() % (idtype)EV.size() + 1);
 	}
 	// 随机关系
-	char* rndRelation(){
-		return RV[rand() % RV.size()];
+	idtype rndRelation(){
+		return -(rand() % (idtype)RV.size() + 1);
 	}
 private:
-	vector<char*> EV, RV;
-	vector<Triple> TV;
-	char* addEntity(string& s){
-		if (E[s] == NULL){
-			E[s] = (char*)(E.find(s)->first.c_str());
-			EV.push_back(E[s]);
+	idtype addEntity(string& s){
+		if (E.count(s)==0){
+			EV.push_back(s);
+			E[s] = (idtype)EV.size();
 		}
 		return E[s];
 	}
-	char* addRelation(string& s){
-		if (R[s] == NULL){
-			R[s] = (char*)(R.find(s)->first.c_str());
-			RV.push_back(R[s]);
+	idtype addRelation(string& s){
+		if (R.count(s) == 0){
+			RV.push_back(s);
+			R[s] = -(idtype)RV.size();
 		}
 		return R[s];
 	}

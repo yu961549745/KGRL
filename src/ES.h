@@ -8,7 +8,7 @@
 嵌入空间数据结构
 map：key=实体/关系名 ， value=嵌入向量
 */
-typedef unordered_map<char*, mat> ES;
+typedef unordered_map<idtype, mat> ES;
 
 /*
 采用SGD进行训练的基于平移的知识图谱嵌入方法的基类
@@ -136,7 +136,7 @@ public:
 		size_t N = data.size();
 		for (int i = 0; i < N;i++){
 			Triple t = data[i];
-			vector<char*> out;
+			vector<idtype> out;
 			predictHeads(out, t, n);
 			for (int k = 0; k < n; k++){
 				t.h = out[k];
@@ -154,8 +154,8 @@ public:
 	}
 
 	// 预测前 n 个可能的 head
-	void predictHeads(vector<char*>& out , Triple tri, int n){
-		vector<pair<double, char*>> fs;
+	void predictHeads(vector<idtype>& out , Triple tri, int n){
+		vector<pair<double, idtype>> fs;
 		for (auto j = kg.E.begin(); j != kg.E.end(); j++){
 			Triple tt = tri;
 			tt.h = j->second;
@@ -167,7 +167,7 @@ public:
 		}
 	}
 private:
-	static bool cmp(const pair<double, char*>&a, const pair<double, char*>& b){
+	static bool cmp(const pair<double, idtype>&a, const pair<double, idtype>& b){
 		return a.first < b.first;
 	}
 };

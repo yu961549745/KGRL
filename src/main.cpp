@@ -2,8 +2,8 @@
 
 int main(){
 	srand((unsigned int)time(NULL));
-	int eDim = 5;// 实体向量的维数
-	int rDim = 5;// 关系向量的维数
+	int eDim = 10;// 实体向量的维数
+	int rDim = 8;// 关系向量的维数
 	double margin = 0.5;// 目标函数中的 margin
 	int batchSize = 100;// SGD 的 batchSize
 	int trainPeriod = 2000;// 计算目标函数值的周期
@@ -47,25 +47,25 @@ int main(){
 	toc();
 
 	// TODO 这里可能存在有未知实体或关系的问题
-	tic("Predicting on test data...");
-	char* outfile = "../FB_A_out.txt";
-	FILE* fid = fopen(outfile, "w");
-	for (int i = 0; i < test.size();i++){
-		vector<char*> out;
-		Triple t = test[i];
-		model.predictHeads(out, t, 10);
-		fprintf(fid, "%s %s", t.r, t.t);
-		for (int j = 0; j < 10; j++){
-			fprintf(fid, " %s", out[j]);
-		}
-		fprintf(fid, "\n");
-		if ((i + 1) % 100 == 0){
-			printf("%d / %d\r", i + 1, test.size());
-		}
-	}
-	printf("%30s", " ");
-	fclose(fid);
-	toc();
+	//tic("Predicting on test data...");
+	//char* outfile = "../FB_A_out.txt";
+	//FILE* fid = fopen(outfile, "w");
+	//for (int i = 0; i < test.size();i++){
+	//	vector<char*> out;
+	//	Triple t = test[i];
+	//	model.predictHeads(out, t, 10);
+	//	fprintf(fid, "%s %s", t.r, t.t);
+	//	for (int j = 0; j < 10; j++){
+	//		fprintf(fid, " %s", out[j]);
+	//	}
+	//	fprintf(fid, "\n");
+	//	if ((i + 1) % 100 == 0){
+	//		printf("%d / %d\r", i + 1, test.size());
+	//	}
+	//}
+	//printf("%30s", " ");
+	//fclose(fid);
+	//toc();
 
 	showMemory();
 	system("pause");

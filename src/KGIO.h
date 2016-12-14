@@ -49,7 +49,7 @@ void loadSubKGWithoutHead(SubKG& dst, KG& base, char* path){
 	str r, t;
 	FILE* fid = fopen(path, "r");
 	while (fscanf(fid, "%s %s", r, t) != EOF){
-		dst.push_back(Triple(NULL, base.R[r], base.E[t]));
+		dst.push_back(Triple(0, base.R[r], base.E[t]));
 	}
 	fclose(fid);
 }
