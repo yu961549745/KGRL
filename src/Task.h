@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 
-// 模型训练
+// 模型训练并保存
 void Train(Model& model, Dataset& data, char* outfile){
 	KG& kg = model.kg;
 
@@ -24,6 +24,20 @@ void Train(Model& model, Dataset& data, char* outfile){
 
 	tic("Saving ES...");
 	model.saveES(outfile);
+	toc();
+}
+
+// 加载模型
+void Load(Model& model, Dataset& data, char* infile){
+	KG& kg = model.kg;
+
+	tic("Loading Knowledge Graph ...");
+	loadKG(kg, data.getTrain());
+	printf("T %d\nE %d\nR %d\n", kg.T.size(), kg.E.size(), kg.R.size());
+	toc();
+
+	tic("Loading Model ...");
+	model.loadES(infile);
 	toc();
 }
 
@@ -48,17 +62,8 @@ void Valid_LP(Model& model, Dataset& data){
 }
 
 // 进行链接预测的测试
-void Test_LP(Model& model, Dataset& data, char* infile, char* outfile){
+void Test_LP(Model& model, Dataset& data, char* outfile){
 	KG& kg = model.kg;
-
-	tic("Loading Knowledge Graph ...");
-	loadKG(kg, data.getTrain());
-	printf("T %d\nE %d\nR %d\n", kg.T.size(), kg.E.size(), kg.R.size());
-	toc();
-
-	tic("Loading Model ...");
-	model.loadES(infile);
-	toc();
 
 	SubKG test;
 	tic("Loading test data");
@@ -80,7 +85,7 @@ void Test_LP(Model& model, Dataset& data, char* infile, char* outfile){
 			printf("%d / %d\r", i + 1, test.size());
 		}
 	}
-	printf("%30s", " ");
+	printf("%30s\r", " ");
 	fclose(fid);
 	toc();
 }

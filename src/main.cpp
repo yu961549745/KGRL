@@ -12,14 +12,16 @@ int main(){
 	param.stepSizes = vector<double>{ 0.1, 0.01, 0.001 };// 步长变化向量
 
 	char* modelFile = "../model/FB_A.txt";
-	char* outFile = "../out/FB_A.txt";
+	char* outFile = "../out/FB_A_tmp.txt";
 
 	TransD model(param);
 
 	Train(model, FB_A, modelFile);
+	//Load(model, FB_A, modelFile);
 	Valid_LP(model, FB_A);
 
-	Test_LP(model, FB_A, modelFile, outFile);
+	//Load(model, FB_A, modelFile);
+	//Test_LP(model, FB_A, outFile);
 
 	system("pause");
 }

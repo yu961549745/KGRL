@@ -26,9 +26,8 @@ public:
 	double fscore(Triple tri){
 		mat &h = es[tri.h], &hp = es[pid(tri.h)], &r = es[tri.r],
 			&rp = es[pid(tri.r)], &t = es[tri.t], &tp = es[pid(tri.t)];
-		mat Mrh = rp*hp.t() + I;
-		mat Mrt = rp*tp.t() + I;
-		mat v = Mrh*h + r - Mrt*t;
+		// 这么写可以加速矩阵运算
+		mat v = rp*(hp.t()*h - tp.t()*t) + I*(h - t) + r;
 		return dot(v, v);
 	}
 
