@@ -1,8 +1,11 @@
 /.vscode
 /armadillo
 /data
-/KGRL
+/KGRL/*
 /KGRL.*
 /x64
 /out
 /model
+!/KGRL.sln
+!/KGRL/KGRL.vcxproj
+!/KGRL/KGRL.vcxproj.filters

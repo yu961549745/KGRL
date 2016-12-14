@@ -16,8 +16,8 @@ int main(){
 
 	TransD model(param);
 
-	Train(model, FB_A, modelFile);
-	//Load(model, FB_A, modelFile);
+	//Train(model, FB_A, modelFile);
+	Load(model, FB_A, modelFile);
 	Valid_LP(model, FB_A);
 
 	//Load(model, FB_A, modelFile);
