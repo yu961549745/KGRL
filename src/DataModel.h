@@ -1,12 +1,14 @@
 /*
 	Knowledge Graph 相关数据结构
 */
-#ifndef _KG_H_
-#define _KG_H_
+#ifndef _DATA_MODEL_H_
+#define _DATA_MODEL_H_
 
 #include "stdafx.h"
 
+// 实体和关系的主键类型
 typedef int idtype;
+
 /*
 三元组数据结构
 保存的是KG中string对象的c_str()指针

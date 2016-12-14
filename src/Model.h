@@ -1,6 +1,6 @@
 // 嵌入空间数据结构及SGD训练算法
-#ifndef _ES_H_
-#define _ES_H_
+#ifndef _MODEL_H_
+#define _MODEL_H_
 
 #include "stdafx.h"
 
