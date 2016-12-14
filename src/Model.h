@@ -10,6 +10,7 @@ map：key=实体/关系名 ， value=嵌入向量
 */
 typedef unordered_map<idtype, mat> ES;
 
+// 模型参数
 struct ModelParam{
 	int eDim;// 实体向量的维数
 	int rDim;// 关系向量的维数
@@ -165,13 +166,23 @@ public:
 		return 1.0*hits / N;
 	}
 
+	// 用于加速链接预测
+
+	// 头部实体估计值
+	virtual mat h_hat(Triple& tri) = 0;
+	// 关系估计值
+	virtual mat r_hat(Triple& tri) = 0;
+	// 尾部实体估计值
+	virtual mat t_hat(Triple& tri) = 0;
+
 	// 预测前 n 个可能的 head
 	void predictHeads(vector<idtype>& out , Triple tri, int n){
 		vector<pair<double, idtype>> fs;
+		mat h_ = t_hat(tri) - r_hat(tri);
 		for (auto j = kg.E.begin(); j != kg.E.end(); j++){
-			Triple tt = tri;
-			tt.h = j->second;
-			fs.push_back(make_pair(fscore(tt), tt.h));
+			tri.h = j->second;
+			mat d = h_hat(tri) - h_;
+			fs.push_back(make_pair(dot(d, d), j->second));
 		}
 		sort(fs.begin(), fs.end(), cmp);
 		for (int k = 0; k < n; k++){

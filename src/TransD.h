@@ -31,6 +31,20 @@ public:
 		return dot(v, v);
 	}
 
+	mat h_hat(Triple& tri) {
+		mat &h = es[tri.h], &hp = es[pid(tri.h)], &rp = es[pid(tri.r)];
+		return rp*(hp.t()*h) + I*h;
+	}
+
+	mat r_hat(Triple& tri) {
+		return es[tri.r];
+	}
+
+	mat t_hat(Triple& tri) {
+		mat &rp = es[pid(tri.r)], &t = es[tri.t], &tp = es[pid(tri.t)];
+		return rp*(tp.t()*t) + I*t;
+	}
+
 	// 评分函数的梯度
 	ES gradient(Triple tri){
 		mat &h = es[tri.h], &hp = es[pid(tri.h)], &r = es[tri.r],

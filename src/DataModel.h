@@ -11,7 +11,6 @@ typedef int idtype;
 
 /*
 三元组数据结构
-保存的是KG中string对象的c_str()指针
 */
 class Triple{
 public:
@@ -33,7 +32,7 @@ struct TripleEqual{
 };
 
 /*
-知识图谱数据结构：
+知识图谱数据结构
 */
 class KG{
 public:
