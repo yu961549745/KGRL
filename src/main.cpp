@@ -4,11 +4,10 @@ int main(){
 	srand((unsigned int)time(NULL));
 
 	ModelParam param;
-	param.eDim = 50;// 实体向量的维数
-	param.rDim = 50;// 关系向量的维数
+	param.eDim = 20;// 实体向量的维数
+	param.rDim = 20;// 关系向量的维数
 	param.margin = 0.5;// 目标函数中的 margin
 	param.batchSize = 100;// SGD 的 batchSize
-	param.trainPeriod = 2000;// 计算目标函数值的周期
 	param.stepSizes = vector<double>{ 0.1, 0.01, 0.001 };// 步长变化向量
 
 	Dataset& data = FB_A;
@@ -23,7 +22,7 @@ int main(){
 	Valid_LP(model, data);
 
 	//Load(model, data, modelFile);
-	Test_LP(model, data, outFile);
+	//Test_LP(model, data, outFile);
 
 	system("pause");
 }

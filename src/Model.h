@@ -16,7 +16,6 @@ struct ModelParam{
 	int rDim;// 关系向量的维数
 	double margin;// 目标函数中的 margin
 	int batchSize;// SGD 的 batchSize
-	int trainPeriod;// 计算目标函数值的周期
 	vector<double> stepSizes;// 步长变化向量
 };
 
@@ -34,7 +33,6 @@ public:
 	int rDim;// 关系向量的维数
 	double margin;// 目标函数中的 margin
 	int batchSize;// SGD 的 batchSize
-	int trainPeriod;// 计算目标函数值的周期
 	vector<double> stepSizes;// 步长变化向量
 
 	Model(ModelParam param){
@@ -42,7 +40,6 @@ public:
 		rDim = param.rDim;
 		margin = param.margin;
 		batchSize = param.batchSize;
-		trainPeriod = param.trainPeriod;
 		stepSizes = param.stepSizes;
 	}
 
@@ -81,11 +78,11 @@ public:
 		return t2;
 	}
 
-	// SGD的一次更新
-	void update(double stepSize){
+	// min-batch update
+	void minBatchUpdate(double stepSize, SubKG::iterator& begin, SubKG::iterator& end){
 		ES e;
-		for (int k = 0; k < batchSize; k++){
-			Triple t1 = kg.rndTriple();
+		for (auto i = begin; i != end; i++){
+			Triple t1 = *i;
 			Triple t2 = fTriple(t1);
 			if (fscore(t1) - fscore(t2) + margin>0){
 				ES e1 = gradient(t1);
@@ -118,24 +115,36 @@ public:
 		}
 	}
 
+	// update epoch
+	void epochUpdate(double stepSize){
+		random_shuffle(kg.TV.begin(), kg.TV.end());
+		SubKG::iterator begin = kg.TV.begin(), end = begin + batchSize;
+		while (end < kg.TV.end()){
+			minBatchUpdate(stepSize, begin, end);
+			begin += batchSize; 
+			end += batchSize;
+		}
+		if (begin < kg.TV.end()){
+			minBatchUpdate(stepSize, begin, kg.TV.end());
+		}
+	}
+
 	// 模型训练
 	void train(){
 		int i = 0;
 		double pf = opt(), cf;
-		printf("t=%08d , f=%g\n", i*trainPeriod, pf);
+		printf("t=%03d , f=%g\n", i, pf);
 		i++;
 		int pStepSize = 0;
 		double stepSize = stepSizes[pStepSize++];
 		while (true){
-			for (int j = 0; j < trainPeriod; j++){
-				update(stepSize);
-			}
+			epochUpdate(stepSize);
 			cf = opt();
-			printf("t=%08d , f=%g\n", i*trainPeriod, cf);
+			printf("t=%03d , f=%g\n", i, cf);
 			if (cf >= pf){
 				stepSize = stepSizes[pStepSize++];
 			}
-			if (pStepSize>=stepSizes.size()){
+			if (pStepSize >= stepSizes.size()){
 				break;
 			}
 			pf = cf;
