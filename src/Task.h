@@ -4,14 +4,25 @@
 
 #include "stdafx.h"
 
-// 模型训练并保存
-void Train(Model& model, Dataset& data, char* outfile){
+// 加载知识图谱并补全
+void loadData(Model& model, Dataset& data){
 	KG& kg = model.kg;
-
 	tic("Loading Knowledge Graph ...");
 	loadKG(kg, data.getTrain());
 	printf("T %d\nE %d\nR %d\n", kg.T.size(), kg.E.size(), kg.R.size());
 	toc();
+
+	tic("Complete Knowledge Graph ...");
+	completeKG(kg, data);
+	printf("T %d\nE %d\nR %d\n", kg.T.size(), kg.E.size(), kg.R.size());
+	toc();
+}
+
+// 模型训练并保存
+void Train(Model& model, Dataset& data, char* outfile){
+	KG& kg = model.kg;
+
+	loadData(model, data);
 
 	tic("Init Embedding Space...");
 	printf("eDim = %d\nrDim = %d\n", model.eDim, model.rDim);
@@ -22,8 +33,8 @@ void Train(Model& model, Dataset& data, char* outfile){
 	model.train();
 	toc();
 
-	tic("Saving ES...");
-	model.saveES(outfile);
+	tic("Saving Model...");
+	model.save(outfile);
 	toc();
 }
 
@@ -31,13 +42,10 @@ void Train(Model& model, Dataset& data, char* outfile){
 void Load(Model& model, Dataset& data, char* infile){
 	KG& kg = model.kg;
 
-	tic("Loading Knowledge Graph ...");
-	loadKG(kg, data.getTrain());
-	printf("T %d\nE %d\nR %d\n", kg.T.size(), kg.E.size(), kg.R.size());
-	toc();
+	loadData(model, data);
 
 	tic("Loading Model ...");
-	model.loadES(infile);
+	model.load(infile);
 	toc();
 }
 
@@ -99,24 +107,58 @@ void Valid_TC(Model& model, Dataset& data){
 	toc();
 
 	tic("Calculating fscores ...");
-	uword npos = (uword)pos.size();
-	uword nneg = (uword)neg.size();
-	mat pv((uword)pos.size(), 1);
-	mat nv((uword)neg.size(), 1);
-	for (uword i = 0; i < npos; i++){
-		pv(i, 0) = model.fscore(pos[i]);
+	vector<double> vpos, vneg;
+	for (auto i = pos.begin(); i != pos.end();i++){
+		vpos.push_back(model.fscore(*i));
 	}
-	for (uword i = 0; i < nneg; i++){
-		nv(i, 0) = model.fscore(neg[i]);
+	for (auto i = neg.begin(); i != neg.end(); i++){
+		vneg.push_back(model.fscore(*i));
 	}
 	toc();
 
-	tic("Output result...");
-	FILE* fid = fopen("../p.txt", "w");
-	fprintMat(fid, pv);
-	fclose(fid);
-	fid = fopen("../n.txt", "w");
-	fprintMat(fid, nv);
+	tic("Calculationg best threash...");
+	sort(vpos.begin(), vpos.end());
+	sort(vneg.begin(), vneg.end());
+	double thresh, bestThresh = 0;
+	int count = 0, maxCount = 0;
+	int pp = 0, pn = 0;
+	int NP = (int)vpos.size(), NN = (int)vneg.size();
+	do{
+		if (pn >= NN || vpos[pp] <= vneg[pn]){
+			thresh = vpos[pp++];
+		}
+		else {// if (pp >= NP || vpos[pp] > vneg[pn])
+			thresh = vneg[pn++];
+		}
+		count = pp + NN - pn;
+		if (count > maxCount){
+			maxCount = count;
+			bestThresh = thresh;
+		}
+	} while (pp < NP || pn < NN);
+	double accuracy = 1.0*maxCount / (NP + NN);
+	printf("%lf -> %lf\n", bestThresh, accuracy);
+	toc();
+
+	model.thresh = bestThresh;
+}
+
+void Test_TC(Model& model, Dataset& data, char* outfile){
+	SubKG test;
+	KG& kg = model.kg;
+
+	tic("Loading test data ...");
+	loadSubKG(test, kg, data.getTest());
+	toc();
+
+	tic("Classify ...");
+	FILE* fid = fopen(outfile, "w");
+	for (auto i = test.begin(); i != test.end(); i++){
+		Triple& t = *i;
+		int type = model.fscore(t) <= model.thresh ? 1 : -1;
+		fprintf(fid, "%s %s %s %d\n", 
+			kg.getEntity(t.h), kg.getRelation(t.r), kg.getEntity(t.t), type);
+	}
 	fclose(fid);
 	toc();
 }

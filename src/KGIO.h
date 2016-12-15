@@ -77,4 +77,50 @@ void fscanMat(FILE*fid, mat& v){
 	}
 }
 
+
+void completeKG_LP(KG& kg, Dataset& data){
+	str h, r, t;
+	FILE* fid = fopen(data.getValid(), "r");
+	while (fscanf(fid, "%s %s %s", h, r, t) != EOF){
+		kg.addEntity(h);
+		kg.addRelation(r);
+		kg.addEntity(t);
+	}
+	fclose(fid);
+	fid = fopen(data.getTest(), "r");
+	while (fscanf(fid, "%s %s", r, t) != EOF){
+		kg.addRelation(r);
+		kg.addEntity(t);
+	}
+	fclose(fid);
+}
+
+void completeKG_TC(KG& kg, Dataset& data){
+	str h, r, t;
+	FILE* fid = fopen(data.getValid(), "r");
+	while (fscanf(fid, "%s %s %s %*d", h, r, t) != EOF){
+		kg.addEntity(h);
+		kg.addRelation(r);
+		kg.addEntity(t);
+	}
+	fclose(fid);
+	fid = fopen(data.getTest(), "r");
+	while (fscanf(fid, "%s %s %s", h, r, t) != EOF){
+		kg.addEntity(h);
+		kg.addRelation(r);
+		kg.addEntity(t);
+	}
+	fclose(fid);
+}
+
+// 补充验证集合测试集上的实体和关系
+void completeKG(KG& kg, Dataset& data){
+	if (data.type == LP){
+		completeKG_LP(kg, data);
+	}
+	else{
+		completeKG_TC(kg, data);
+	}
+}
+
 #endif

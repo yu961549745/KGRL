@@ -4,11 +4,16 @@
 
 #include "stdafx.h"
 
+enum DataType{ LP, TC };
+
+// Êý¾Ý¼¯
 class Dataset{
 private:
 	string name, train, valid, test;
 public:
-	Dataset(char* _name, char* _path, char* _train, char* _valid, char* _test){
+	DataType type;
+	Dataset(DataType _type, char* _name, char* _path, char* _train, char* _valid, char* _test){
+		type = _type;
 		name = _name;
 		train = _path; train += _train;
 		valid = _path; valid += _valid;
@@ -28,9 +33,9 @@ public:
 	}
 };
 
-Dataset FB_A("FB_A", "../data/FB_A/", "train.txt", "valid.txt", "test.txt");
-Dataset FB_B("FB_B", "../data/FB_B/", "train.txt", "valid.txt", "test.txt");
-Dataset WN_A("WN_A", "../data/WN_A/", "train.txt", "valid.txt", "test.txt");
-Dataset WN_B("WN_B", "../data/WN_B/", "train.txt", "valid.txt", "test.txt");
+Dataset FB_A(LP, "FB_A", "../data/FB_A/", "train.txt", "valid.txt", "test.txt");
+Dataset FB_B(TC, "FB_B", "../data/FB_B/", "train.txt", "valid.txt", "test.txt");
+Dataset WN_A(LP, "WN_A", "../data/WN_A/", "train.txt", "valid.txt", "test.txt");
+Dataset WN_B(TC, "WN_B", "../data/WN_B/", "train.txt", "valid.txt", "test.txt");
 
 #endif

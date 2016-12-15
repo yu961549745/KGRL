@@ -17,6 +17,7 @@ struct ModelParam{
 	double margin;// 目标函数中的 margin
 	int batchSize;// SGD 的 batchSize
 	vector<double> stepSizes;// 步长变化向量
+	int errSize;// 一个正确三元组采样几个错误三元组
 };
 
 /*
@@ -34,6 +35,8 @@ public:
 	double margin;// 目标函数中的 margin
 	int batchSize;// SGD 的 batchSize
 	vector<double> stepSizes;// 步长变化向量
+	int errSize;// 一个正确三元组采样几个错误三元组
+	double thresh = 0;// 三元组分类的阈值
 
 	Model(ModelParam param){
 		eDim = param.eDim;
@@ -41,6 +44,7 @@ public:
 		margin = param.margin;
 		batchSize = param.batchSize;
 		stepSizes = param.stepSizes;
+		errSize = param.errSize;
 	}
 
 	// 初始化
@@ -83,31 +87,35 @@ public:
 		ES e;
 		for (auto i = begin; i != end; i++){
 			Triple t1 = *i;
-			Triple t2 = fTriple(t1);
-			if (fscore(t1) - fscore(t2) + margin>0){
-				ES e1 = gradient(t1);
-				for (auto i = e1.begin(); i != e1.end(); i++){
-					if (e.count(i->first) == 0){
-						e[i->first] = i->second;
+			for (int j = 0; j < errSize; j++){
+				Triple t2 = fTriple(t1);
+				if (fscore(t1) - fscore(t2) + margin>0){
+					ES e1 = gradient(t1);
+					for (auto i = e1.begin(); i != e1.end(); i++){
+						if (e.count(i->first) == 0){
+							e[i->first] = i->second;
+						}
+						else{
+							e[i->first] += i->second;
+						}
 					}
-					else{
-						e[i->first] += i->second;
-					}
-				}
-				ES e2 = gradient(t2);
-				for (auto i = e2.begin(); i != e2.end(); i++){
-					if (e.count(i->first) == 0){
-						e[i->first] = i->second;
-					}
-					else{
-						e[i->first] -= i->second;
+					ES e2 = gradient(t2);
+					for (auto i = e2.begin(); i != e2.end(); i++){
+						if (e.count(i->first) == 0){
+							e[i->first] = i->second;
+						}
+						else{
+							e[i->first] -= i->second;
+						}
 					}
 				}
 			}
 		}
+		int numBatch = (int)(end - begin);
 		for (auto i = e.begin(); i != e.end(); i++){
 			mat& v = es[i->first];
-			v -= stepSize*(i->second);
+			mat& g = i->second;
+			v -= stepSize*g / numBatch / errSize;
 			double nv = norm(v);
 			if (nv > 1){
 				v /= nv;
@@ -199,30 +207,52 @@ public:
 		}
 	}
 
-	// 保存ES
-	void saveES(char* fname){
+	// 保存模型
+	void save(char* fname){
 		FILE* fid = fopen(fname, "w");
+		fprintf(fid, "%d %d %lf %d %d\n", eDim, rDim, margin, batchSize, errSize);
+		fprintf(fid, "%d ", stepSizes.size());
+		for (size_t k = 0; k < stepSizes.size(); k++){
+			fprintf(fid, "%lf ", stepSizes[k]);
+		}
+		puts("");
+		saveES(fid);
+		fclose(fid);
+	}
+
+	// 加载模型
+	void load(char* fname){
+		FILE* fid = fopen(fname, "r");
+		fscanf(fid, "%d %d %lf %d %d\n", &eDim, &rDim, &margin, &batchSize, &errSize);
+		int n, x;
+		fscanf(fid, "%d", &n);
+		for (int k = 0; k < n; k++){
+			fscanf(fid, "%lf", &x);
+			stepSizes.push_back(x);
+		}
+		loadES(fid);
+		fclose(fid);
+	}
+private:
+	static bool cmp(const pair<double, idtype>&a, const pair<double, idtype>& b){
+		return a.first < b.first;
+	}
+	// 保存ES
+	void saveES(FILE* fid){
 		for (auto i = es.begin(); i != es.end(); i++){
 			mat& v = i->second;
 			fprintf(fid, "%d %d %d\n", i->first, v.n_rows, v.n_cols);
 			fprintMat(fid, v);
 		}
-		fclose(fid);
 	}
 	// 读取ES
-	void loadES(char* fname){
-		FILE* fid = fopen(fname, "r");
+	void loadES(FILE* fid){
 		int id, m, n;
 		while (fscanf(fid, "%d %d %d", &id, &m, &n) != EOF){
 			es[id] = mat(m, n);
 			fscanMat(fid, es[id]);
 		}
 		fclose(fid);
-	}
-
-private:
-	static bool cmp(const pair<double, idtype>&a, const pair<double, idtype>& b){
-		return a.first < b.first;
 	}
 };
 

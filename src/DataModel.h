@@ -71,15 +71,16 @@ public:
 	char* getRelation(idtype id){
 		return (char*)RV[-id - 1].c_str();
 	}
-private:
-	idtype addEntity(string& s){
+	// 增加实体
+	idtype addEntity(string s){
 		if (E.count(s)==0){
 			EV.push_back(s);
 			E[s] = (idtype)EV.size();
 		}
 		return E[s];
 	}
-	idtype addRelation(string& s){
+	// 增加关系
+	idtype addRelation(string s){
 		if (R.count(s) == 0){
 			RV.push_back(s);
 			R[s] = -(idtype)RV.size();
@@ -88,7 +89,7 @@ private:
 	}
 };
 
-// 子图谱，其中Tiiple的键以父图谱为准
+// 子图谱，其中Triple的键以父图谱为准
 typedef vector<Triple> SubKG;
 
 #endif

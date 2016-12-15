@@ -15,12 +15,12 @@
 using namespace std;
 using namespace arma;
 
+#include "Dataset.h"
 #include "DataModel.h"
 #include "KGIO.h"
 #include "utils.h"
 #include "Model.h"
 #include "TransD.h"
-#include "Dataset.h"
 #include "Task.h"
 
 #endif
