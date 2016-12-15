@@ -210,12 +210,6 @@ public:
 	// 保存模型
 	void save(char* fname){
 		FILE* fid = fopen(fname, "w");
-		fprintf(fid, "%d %d %lf %d %d\n", eDim, rDim, margin, batchSize, errSize);
-		fprintf(fid, "%d ", stepSizes.size());
-		for (size_t k = 0; k < stepSizes.size(); k++){
-			fprintf(fid, "%lf ", stepSizes[k]);
-		}
-		puts("");
 		saveES(fid);
 		fclose(fid);
 	}
@@ -223,13 +217,6 @@ public:
 	// 加载模型
 	void load(char* fname){
 		FILE* fid = fopen(fname, "r");
-		fscanf(fid, "%d %d %lf %d %d\n", &eDim, &rDim, &margin, &batchSize, &errSize);
-		int n, x;
-		fscanf(fid, "%d", &n);
-		for (int k = 0; k < n; k++){
-			fscanf(fid, "%lf", &x);
-			stepSizes.push_back(x);
-		}
 		loadES(fid);
 		fclose(fid);
 	}

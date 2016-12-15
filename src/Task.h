@@ -20,8 +20,6 @@ void loadData(Model& model, Dataset& data){
 
 // 模型训练并保存
 void Train(Model& model, Dataset& data, char* outfile){
-	KG& kg = model.kg;
-
 	loadData(model, data);
 
 	tic("Init Embedding Space...");
@@ -40,8 +38,6 @@ void Train(Model& model, Dataset& data, char* outfile){
 
 // 加载模型
 void Load(Model& model, Dataset& data, char* infile){
-	KG& kg = model.kg;
-
 	loadData(model, data);
 
 	tic("Loading Model ...");
@@ -99,7 +95,7 @@ void Test_LP(Model& model, Dataset& data, char* outfile){
 }
 
 // 三元组分类验证，同时确定最优阈值
-void Valid_TC(Model& model, Dataset& data){
+void Valid_TC(Model& model, Dataset& data, char* outPath = NULL){
 	SubKG pos, neg;
 
 	tic("Loading valid data...");
@@ -108,34 +104,64 @@ void Valid_TC(Model& model, Dataset& data){
 
 	tic("Calculating fscores ...");
 	vector<double> vpos, vneg;
-	for (auto i = pos.begin(); i != pos.end();i++){
-		vpos.push_back(model.fscore(*i));
+	for (auto i = pos.begin(); i != pos.end(); i++){
+		double f = model.fscore(*i);
+		vpos.push_back(f);
 	}
 	for (auto i = neg.begin(); i != neg.end(); i++){
-		vneg.push_back(model.fscore(*i));
+		double f = model.fscore(*i);
+		vneg.push_back(f);
 	}
 	toc();
+
+	// 输出到Matlab目录用于作图
+	if (outPath != NULL){
+		str path;
+		sprintf(path, "%s/p.txt", outPath);
+		FILE* fid = fopen(path, "w");
+		for (auto i = vpos.begin(); i != vpos.end(); i++){
+			fprintf(fid, "%lf\n", *i);
+		}
+		fclose(fid);
+		sprintf(path, "%s/n.txt", outPath);
+		fid = fopen(path, "w");
+		for (auto i = vneg.begin(); i != vneg.end(); i++){
+			fprintf(fid, "%lf\n", *i);
+		}
+		fclose(fid);
+	}
 
 	tic("Calculationg best threash...");
 	sort(vpos.begin(), vpos.end());
 	sort(vneg.begin(), vneg.end());
-	double thresh, bestThresh = 0;
-	int count = 0, maxCount = 0;
-	int pp = 0, pn = 0;
 	int NP = (int)vpos.size(), NN = (int)vneg.size();
-	do{
-		if (pn >= NN || vpos[pp] <= vneg[pn]){
+	double thresh = 0, bestThresh = 0;
+	int count = NN, maxCount = NN;
+	int pp = 0, pn = 0;
+	while (true){
+		if (pp < NP && pn < NN){
+			if (vpos[pp] <= vneg[pn]){
+				thresh = vpos[pp++];
+			}
+			else {
+				thresh = vneg[pn++];
+			}
+		}
+		else if (pp >= NP && pn < NN){
+			thresh = vneg[pn++];
+		}
+		else if (pp < NP && pn >= NN){
 			thresh = vpos[pp++];
 		}
-		else {// if (pp >= NP || vpos[pp] > vneg[pn])
-			thresh = vneg[pn++];
+		else{
+			break;
 		}
 		count = pp + NN - pn;
 		if (count > maxCount){
 			maxCount = count;
 			bestThresh = thresh;
 		}
-	} while (pp < NP || pn < NN);
+	}
 	double accuracy = 1.0*maxCount / (NP + NN);
 	printf("%lf -> %lf\n", bestThresh, accuracy);
 	toc();
@@ -161,6 +187,24 @@ void Test_TC(Model& model, Dataset& data, char* outfile){
 	}
 	fclose(fid);
 	toc();
+}
+
+void TrainAndValidLP(Model& model, Dataset& data, char* modelFile, int validSize){
+	Train(model, data, modelFile);
+	Valid_LP(model, data, validSize);
+}
+void LoadAndTestLP(Model& model, Dataset& data, char* modelFile, char* outFile){
+	Load(model, data, modelFile);
+	Test_LP(model, data, outFile);
+}
+void TrainAndValidTC(Model& model, Dataset& data, char* modelFile){
+	Train(model, data, modelFile);
+	Valid_TC(model, data);
+}
+void LoadAndTestTC(Model& model, Dataset& data, char* modelFile, char* outFile){
+	Load(model, data, modelFile);
+	Valid_TC(model, data);
+	Test_TC(model, data, outFile);
 }
 
 #endif
