@@ -42,7 +42,7 @@ void Load(Model& model, Dataset& data, char* infile){
 }
 
 // 根据链接预测验证模型效果
-void Valid_LP(Model& model, Dataset& data){
+void Valid_LP(Model& model, Dataset& data, int validSize){
 	KG& kg = model.kg;
 
 	tic("Loading valid data...");
@@ -54,7 +54,7 @@ void Valid_LP(Model& model, Dataset& data){
 	toc();
 
 	// 预测的运算比较耗时，先取前几个用于测试
-	SubKG minValid(valid.begin(), valid.begin() + 100);
+	SubKG minValid(valid.begin(), valid.begin() + validSize);
 
 	tic("Predicting on valid data...");
 	printf("Hist@10 = %g\n", model.predictHead(minValid, 10));
@@ -86,6 +86,37 @@ void Test_LP(Model& model, Dataset& data, char* outfile){
 		}
 	}
 	printf("%30s\r", " ");
+	fclose(fid);
+	toc();
+}
+
+// 三元组分类验证，同时确定最优阈值
+void Valid_TC(Model& model, Dataset& data){
+	SubKG pos, neg;
+
+	tic("Loading valid data...");
+	loadSubKGWithType(pos, neg, model.kg, data.getValid());
+	toc();
+
+	tic("Calculating fscores ...");
+	uword npos = (uword)pos.size();
+	uword nneg = (uword)neg.size();
+	mat pv((uword)pos.size(), 1);
+	mat nv((uword)neg.size(), 1);
+	for (uword i = 0; i < npos; i++){
+		pv(i, 0) = model.fscore(pos[i]);
+	}
+	for (uword i = 0; i < nneg; i++){
+		nv(i, 0) = model.fscore(neg[i]);
+	}
+	toc();
+
+	tic("Output result...");
+	FILE* fid = fopen("../p.txt", "w");
+	fprintMat(fid, pv);
+	fclose(fid);
+	fid = fopen("../n.txt", "w");
+	fprintMat(fid, nv);
 	fclose(fid);
 	toc();
 }

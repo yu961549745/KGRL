@@ -54,4 +54,27 @@ void loadSubKGWithoutHead(SubKG& dst, KG& base, char* path){
 	fclose(fid);
 }
 
+// Êä³ö¾ØÕó
+void fprintMat(FILE* fid, mat& v){
+	int m = v.n_rows;
+	int n = v.n_cols;
+	for (int i = 0; i < m; i++){
+		for (int j = 0; j < n; j++){
+			fprintf(fid, "%lf ", v(i, j));
+		}
+		fprintf(fid, "\n");
+	}
+}
+
+// ¶ÁÈë¾ØÕó
+void fscanMat(FILE*fid, mat& v){
+	int m = v.n_rows;
+	int n = v.n_cols;
+	for (int i = 0; i < m; i++){
+		for (int j = 0; j < n; j++){
+			fscanf(fid, "%lf", &v(i, j));
+		}
+	}
+}
+
 #endif

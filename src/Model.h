@@ -224,25 +224,6 @@ private:
 	static bool cmp(const pair<double, idtype>&a, const pair<double, idtype>& b){
 		return a.first < b.first;
 	}
-	void fprintMat(FILE* fid, mat& v){
-		int m = v.n_rows;
-		int n = v.n_cols;
-		for (int i = 0; i < m; i++){
-			for (int j = 0; j < n; j++){
-				fprintf(fid, "%lf ", v(i, j));
-			}
-			fprintf(fid, "\n");
-		}
-	}
-	void fscanMat(FILE*fid, mat& v){
-		int m = v.n_rows;
-		int n = v.n_cols;
-		for (int i = 0; i < m; i++){
-			for (int j = 0; j < n; j++){
-				fscanf(fid, "%lf", &v(i, j));
-			}
-		}
-	}
 };
 
 #endif
