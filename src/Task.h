@@ -53,7 +53,7 @@ void Valid_LP(Model& model, Dataset& data, int validSize){
 	SubKG valid;
 	loadSubKG(valid, kg, data.getValid());
 	// 添加验证数据集中的三元组，保证验证数据集中的三元组被认为是正确的。
-	loadKG(kg, "../data/FB_A/valid.txt");
+	loadKG(kg, data.getValid());
 	printf("T %d\nE %d\nR %d\n", kg.T.size(), kg.E.size(), kg.R.size());
 	toc();
 

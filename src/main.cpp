@@ -15,7 +15,7 @@ int main(){
 
 	TransD model(param);
 
-	Dataset& data = FB_A;
+	Dataset& data = WN_A;
 
 	str modelFile, outFile;
 	sprintf(modelFile, "../model/%s_%d_%d.txt", data.getName(), param.eDim, param.rDim);
