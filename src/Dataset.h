@@ -12,6 +12,7 @@ private:
 	string name, train, valid, test;
 public:
 	DataType type;
+	Dataset(){}
 	Dataset(DataType _type, char* _name, char* _path, char* _train, char* _valid, char* _test){
 		type = _type;
 		name = _name;

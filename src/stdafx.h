@@ -3,6 +3,7 @@
 
 #include<iostream>
 #include<cstdio>
+#include<cstring>
 #include<armadillo>
 #include<vector>
 #include<unordered_map>
