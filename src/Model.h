@@ -51,10 +51,18 @@ public:
 	virtual void init() = 0;
 
 	// 评分函数关于各个嵌入向量的偏导
-	virtual ES gradient(Triple t) = 0;
+	virtual void gradient(Triple t, ES& out) = 0;
 
 	// 评分函数
 	virtual double fscore(Triple t) = 0;
+
+	// 约束嵌入向量的模
+	virtual void nomalize(mat& v){
+		double nv = norm(v);
+		if (nv > 1){
+			v /= nv;
+		}
+	}
 
 	// 计算训练集上的目标函数
 	double opt(){
@@ -90,7 +98,7 @@ public:
 			for (int j = 0; j < errSize; j++){
 				Triple t2 = fTriple(t1);
 				if (fscore(t1) - fscore(t2) + margin>0){
-					ES e1 = gradient(t1);
+					ES e1; gradient(t1, e1);
 					for (auto i = e1.begin(); i != e1.end(); i++){
 						if (e.count(i->first) == 0){
 							e[i->first] = i->second;
@@ -99,7 +107,7 @@ public:
 							e[i->first] += i->second;
 						}
 					}
-					ES e2 = gradient(t2);
+					ES e2; gradient(t2, e2);
 					for (auto i = e2.begin(); i != e2.end(); i++){
 						if (e.count(i->first) == 0){
 							e[i->first] = i->second;
@@ -116,10 +124,7 @@ public:
 			mat& v = es[i->first];
 			mat& g = i->second;
 			v -= stepSize*g / numBatch / errSize;
-			double nv = norm(v);
-			if (nv > 1){
-				v /= nv;
-			}
+			nomalize(v);
 		}
 	}
 

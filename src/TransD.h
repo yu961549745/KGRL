@@ -46,29 +46,26 @@ public:
 	}
 
 	// 评分函数的梯度
-	ES gradient(Triple tri){
+	void gradient(Triple tri, ES& e){
 		mat &h = es[tri.h], &hp = es[pid(tri.h)], &r = es[tri.r],
 			&rp = es[pid(tri.r)], &t = es[tri.t], &tp = es[pid(tri.t)];
 		mat Mrh = rp*hp.t() + I;
 		mat Mrt = rp*tp.t() + I;
 		mat f = Mrh*h + r - Mrt*t;
 
-		ES e;
 		e[tri.h] = 2 * Mrh.t()*f;
 		e[tri.t] = -2 * Mrt.t()*f;
 		e[tri.r] = 2 * f;
 		e[pid(tri.r)] = 2 * f*(hp.t()*h - tp.t()*t);
 		e[pid(tri.h)] = 2 * h*(rp.t()*f);
 		e[pid(tri.t)] = -2 * t*(rp.t()*f);
-		return e;
 	}
 
 private:
 	mat I;
 	mat randvec(int n){
 		mat v = 2 * mat(n, 1, fill::randu) - 1;
-		double nv = norm(v);
-		if (nv > 1)v /= nv;
+		nomalize(v);
 		return v;
 	}
 	// 获取投影向量的id
