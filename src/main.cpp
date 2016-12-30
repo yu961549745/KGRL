@@ -25,8 +25,8 @@ int main(int argc, char* argv[]){
 
 	// 默认参数
 	ModelParam param;
-	param.eDim = 20;// 实体向量的维数
-	param.rDim = 20;// 关系向量的维数
+	param.eDim = 50;// 实体向量的维数
+	param.rDim = 50;// 关系向量的维数
 	param.margin = 0.5;// 目标函数中的 margin
 	param.batchSize = 100;// SGD 的 batchSize
 	param.stepSizes = vector<double>{ 10, 1, 0.1 };// 步长变化向量

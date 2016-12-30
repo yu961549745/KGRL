@@ -91,7 +91,7 @@ public:
 	}
 
 	// min-batch update
-	void minBatchUpdate(double stepSize, SubKG::iterator& begin, SubKG::iterator& end){
+	void minBatchUpdate(double stepSize, const SubKG::iterator& begin, const SubKG::iterator& end){
 		ES e;
 		for (auto i = begin; i != end; i++){
 			Triple t1 = *i;
