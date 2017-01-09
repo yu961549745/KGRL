@@ -1,35 +1,26 @@
-package kgrl.ui;
+package kgrl;
 
 import java.awt.BorderLayout;
+import java.awt.Desktop;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileReader;
-import java.lang.reflect.Field;
+import java.io.File;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
-import kgrl.config.AppConfig;
-import kgrl.config.TaskConfig;
-import kgrl.impl.CmdRunner;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-public class UI implements AppendableUI {
+public class UI {
+	private Font font = new Font("Times New Roman", Font.PLAIN, 64);
 	private JFrame frame = new JFrame("KGRL");
-	private JLabel dataLabel = new JLabel("Data Set");
+	private JLabel dataLabel = new JLabel("Data Set :  ");
 	private JComboBox<String> taskBox = new JComboBox<String>();
 	private JButton trainButton = new JButton("Train");
 	private JButton testButton = new JButton("Test");
-	private JTextArea logArea = new JTextArea(20, 150);
-	private JScrollPane scrollPane = new JScrollPane(logArea);
 
 	private static final UI INSTANCE = new UI();
 
@@ -38,24 +29,17 @@ public class UI implements AppendableUI {
 	}
 
 	private UI() {
-		try {
-			loadConfig();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 		initUI();
 		addListener();
 	}
 
-	private AppConfig config = null;
-
-	private void loadConfig() throws Exception {
-		Gson gson = new GsonBuilder().create();
-		config = gson.fromJson(new FileReader("config.json"), AppConfig.class);
-	}
-
 	private void initUI() {
 		frame.setLayout(new BorderLayout());
+
+		dataLabel.setFont(font);
+		taskBox.setFont(font);
+		trainButton.setFont(font);
+		testButton.setFont(font);
 
 		taskBox.addItem("FB_A");
 		taskBox.addItem("FB_B");
@@ -69,65 +53,32 @@ public class UI implements AppendableUI {
 		buttonPanel.add(taskBox);
 		buttonPanel.add(trainButton);
 		buttonPanel.add(testButton);
-		frame.add(buttonPanel, BorderLayout.NORTH);
-
-		frame.add(scrollPane, BorderLayout.CENTER);
-		logArea.setEditable(false);
+		frame.add(buttonPanel, BorderLayout.CENTER);
 
 		frame.pack();
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
-	private CmdRunner runner = new CmdRunner();
+	private ButtonListener listener = new ButtonListener();
 
 	private void addListener() {
-		trainButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					disable();
-					String cmd = getTaskConfig().getTrainCmd();
-					runner.run(cmd);
-					enable();
-				} catch (Exception e1) {
-					e1.printStackTrace();
-				}
+		trainButton.addActionListener(listener);
+		testButton.addActionListener(listener);
+	}
+
+	private class ButtonListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JButton b = (JButton) e.getSource();
+			String cmd = taskBox.getSelectedItem() + "_" + b.getText() + ".bat";
+			try {
+				Desktop.getDesktop().open(new File(cmd));
+			} catch (Exception e1) {
+				e1.printStackTrace();
 			}
-		});
-		testButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					disable();
-					String cmd = getTaskConfig().getTestCmd();
-					runner.run(cmd);
-					enable();
-				} catch (Exception e1) {
-					e1.printStackTrace();
-				}
-			}
-		});
+		}
+
 	}
 
-	private void disable() {
-		trainButton.setEnabled(false);
-		testButton.setEnabled(false);
-	}
-
-	private void enable() {
-		trainButton.setEnabled(true);
-		testButton.setEnabled(true);
-	}
-
-	private TaskConfig getTaskConfig() throws Exception {
-		String name = taskBox.getSelectedItem().toString();
-		Field field = AppConfig.class.getDeclaredField(name);
-		return (TaskConfig) field.get(config);
-	}
-
-	@Override
-	public void append(final String str) {
-		logArea.append(str);
-	}
 }

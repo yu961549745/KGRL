@@ -14,7 +14,8 @@ void printHelp(){
 	exit(1);
 }
 int main(int argc, char* argv[]){
-	srand((unsigned int)time(NULL));
+	//srand((unsigned int)time(NULL));
+	srand(0);
 
 	// 初始化数据集
 	unordered_map<string, Dataset> dataMap;
