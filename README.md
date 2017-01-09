@@ -1,7 +1,28 @@
 # KGRL
 知识图谱嵌入框架，内含TransD实现。
-
 依赖库 [armadillo](http://arma.sourceforge.net/)
+
+# 直接运行
+运行环境： Windows 64位 （Windows 10 64位测试通过）
+运行说明： 
++ 可运行文件在 app 目录下
++ 输出结果在 out 目录下
++ 训练结果在 model 目录下
+
+因为训练结果以保存在 model 目录下，所以可以直接进行测试
+
+app 目录下可运行脚本说明如下：
+
+文件           | 功能
+--------------|--------------------
+FB_A_Train    | FB_A 训练
+FB_A_Test     | FB_A 测试
+FB_B_Train    | FB_B 训练
+FB_B_Test     | FB_B 测试
+WN_A_Train    | WN_A 训练
+WN_A_Test     | WN_A 测试
+WN_B_Train    | WN_B 训练
+WN_B_Test     | WN_B 测试
 
 # 编译运行
 ## Windows 64位操作系统
