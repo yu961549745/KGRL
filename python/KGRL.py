@@ -27,4 +27,3 @@ KGRL
 def KGRL(data="FB_A",task="LP_Train",eDim=20,rDim=20,margin=0.5,batchSize=200,errSize=1,validSize=200):
     subprocess.call (["KGRL","-eDim",str(eDim),"-rDim",str(rDim),"-data",str(data),"-task",str(task),"-margin",str(margin),"-batchSize",str(batchSize),"-errSize",str(errSize),"-validSize",str(validSize)],shell=True)
 
-KGRL()
