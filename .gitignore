@@ -6,6 +6,7 @@
 /x64
 /out
 /model
+/result
 *.dll
 !/KGRL.sln
 !/KGRL/KGRL.vcxproj
