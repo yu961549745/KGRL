@@ -3,7 +3,10 @@
 
 # 直接运行
 运行环境： Windows 64位 （Windows 10 64位测试通过）
-运行说明： 
+
+在安装了Java的前提下也可以双击打开 `KGRL_UI.jar` ，选择相应的任务执行。
+
+说明： 
 + 可运行文件在 app 目录下
 + 输出结果在 out 目录下
 + result 文件夹下是我们挑选的结果
@@ -26,8 +29,6 @@ WN_A_Train.bat    | WN_A 训练
 WN_A_Test.bat     | WN_A 测试
 WN_B_Train.bat    | WN_B 训练
 WN_B_Test.bat     | WN_B 测试
-
-在安装了Java的前提下也可以双击打开 `KGRL_UI.jar` ，选择相应的任务执行。
 
 # 依赖库
 [armadillo](http://arma.sourceforge.net/)
