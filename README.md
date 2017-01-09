@@ -15,16 +15,16 @@
 
 app 目录下可运行脚本说明如下：
 
-文件           | 功能
---------------|--------------------
-FB_A_Train    | FB_A 训练
-FB_A_Test     | FB_A 测试
-FB_B_Train    | FB_B 训练
-FB_B_Test     | FB_B 测试
-WN_A_Train    | WN_A 训练
-WN_A_Test     | WN_A 测试
-WN_B_Train    | WN_B 训练
-WN_B_Test     | WN_B 测试
+文件              | 功能
+------------------|--------------------
+FB_A_Train.bat    | FB_A 训练
+FB_A_Test.bat     | FB_A 测试
+FB_B_Train.bat    | FB_B 训练
+FB_B_Test.bat     | FB_B 测试
+WN_A_Train.bat    | WN_A 训练
+WN_A_Test.bat     | WN_A 测试
+WN_B_Train.bat    | WN_B 训练
+WN_B_Test.bat     | WN_B 测试
 
 # 依赖库
 [armadillo](http://arma.sourceforge.net/)
