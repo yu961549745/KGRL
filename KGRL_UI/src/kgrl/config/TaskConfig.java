@@ -85,7 +85,7 @@ public class TaskConfig {
 		this.test = test;
 	}
 
-	public String getTrainString() throws Exception {
+	public String getTrainCmd() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("KGRL ");
 		Field[] fields = this.getClass().getDeclaredFields();
@@ -101,7 +101,7 @@ public class TaskConfig {
 		return buffer.toString();
 	}
 
-	public String getTestString() throws Exception {
+	public String getTestCmd() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("KGRL ");
 		Field[] fields = this.getClass().getDeclaredFields();

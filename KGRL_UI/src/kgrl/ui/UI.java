@@ -87,8 +87,7 @@ public class UI implements AppendableUI {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					disable();
-					String cmd = getTaskConfig().getTrainString();
-					System.out.println(">> " + cmd);
+					String cmd = getTaskConfig().getTrainCmd();
 					runner.run(cmd);
 					enable();
 				} catch (Exception e1) {
@@ -101,8 +100,7 @@ public class UI implements AppendableUI {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					disable();
-					String cmd = getTaskConfig().getTestString();
-					System.out.println(">>" + cmd);
+					String cmd = getTaskConfig().getTestCmd();
 					runner.run(cmd);
 					enable();
 				} catch (Exception e1) {
