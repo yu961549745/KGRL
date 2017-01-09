@@ -1,0 +1,46 @@
+{
+    "FB_A": {
+        "eDim": 56,
+        "rDim": 54,
+        "margin": 0.2228,
+        "batchSize": 217,
+        "errSize": 5,
+        "validSize": 300,
+        "data": "FB_A",
+        "train": "LP_Train",
+        "test": "LP_Test"
+    },
+    "FB_B": {
+        "eDim": 39,
+        "rDim": 46,
+        "margin": 0.07,
+        "batchSize": 114,
+        "errSize": 4,
+        "validSize": 300,
+        "data": "FB_B",
+        "train": "TC_Train",
+        "test": "TC_Test"
+    },
+    "WN_A": {
+        "eDim": 41,
+        "rDim": 56,
+        "margin": 0.26,
+        "batchSize": 242,
+        "errSize": 10,
+        "validSize": 300,
+        "data": "WN_A",
+        "train": "LP_Train",
+        "test": "LP_Test"
+    },
+    "WN_B": {
+        "eDim": 89,
+        "rDim": 20,
+        "margin": 0.35,
+        "batchSize": 126,
+        "errSize": 10,
+        "validSize": 300,
+        "data": "WN_B",
+        "train": "TC_Train",
+        "test": "TC_Test"
+    }
+}
