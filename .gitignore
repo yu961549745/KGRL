@@ -6,7 +6,7 @@
 /x64
 /out
 /model
-/app
+*.dll
 !/KGRL.sln
 !/KGRL/KGRL.vcxproj
 !/KGRL/KGRL.vcxproj.filters
