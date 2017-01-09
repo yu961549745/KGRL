@@ -86,8 +86,4 @@ int main(int argc, char* argv[]){
 		LoadAndTestTC(model, data, modelFile, outFile);
 	else 
 		printHelp();
-
-	if (argc < 2){
-		system("pause");
-	}
 }

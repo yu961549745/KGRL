@@ -10,10 +10,11 @@
 + 训练结果在 model 目录下
 + Windows 环境下源代码文件夹为 src ，编码方式 GBK
 + Linux 和 Mac 环境下源代码文件夹为 src_utf8 , 编码方式 UTF8
++ data 下为数据文件
 
 因为训练结果已经保存在 model 目录下，所以可以直接进行测试，不需要进行训练
 
-app 目录下可运行脚本说明如下：
+app 目录下可运行脚本说明如下：双击即可运行
 
 文件              | 功能
 ------------------|--------------------
@@ -25,6 +26,8 @@ WN_A_Train.bat    | WN_A 训练
 WN_A_Test.bat     | WN_A 测试
 WN_B_Train.bat    | WN_B 训练
 WN_B_Test.bat     | WN_B 测试
+
+在安装了Java的前提下也可以双击打开 `KGRL_UI.jar` ，选择相应的任务执行。
 
 # 依赖库
 [armadillo](http://arma.sourceforge.net/)
