@@ -17,6 +17,8 @@ void printHelp(){
 }
 
 void runKGRL(int eDim, int rDim, double margin, int batchSize, int errSize, char* dataName, char* taskName, int validSize){
+	srand((unsigned int)time(NULL));
+	
 	// 初始化数据集
 	unordered_map<string, Dataset> dataMap;
 	dataMap["FB_A"] = FB_A;

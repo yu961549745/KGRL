@@ -3,7 +3,7 @@
 
 # 直接运行
 运行环境： Windows 64位 （Windows 10 64位测试通过）
-+ 在安装了64位Matlab的情况下，可以运行`runUI.m`，打开最友好的图形界面。
++ 在安装了64位Matlab的情况下（Matlab R2016a测试通过），可以运行`runUI.m`，打开最友好的图形界面。如果无法运行，可以在安装了对应Matlab版本能够识别的Visual Studio的前提下，在`matlab`文件下运行`compile.m`重新编译，再执行。
 + 在安装了Java的前提下也可以双击打开 `KGRL_UI.jar` ，选择相应的任务执行。
 + 都没有安装的话，可以直接运行一系列 bat 文件。
 
